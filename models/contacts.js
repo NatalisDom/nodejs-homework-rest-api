@@ -1,19 +1,32 @@
-// const fs = require('fs/promises')
 
-const listContacts = async () => {}
+const { Schema, model } = require("mongoose");
+const { handleMongooseError } = require("../helpers");
 
-const getContactById = async (contactId) => {}
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Set name for contact"],
+    },
+    email: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
 
-const removeContact = async (contactId) => {}
+contactSchema.post("save", handleMongooseError);
 
-const addContact = async (body) => {}
-
-const updateContact = async (contactId, body) => {}
+const Contact = model("contact", contactSchema);
 
 module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-}
+  Contact,
+
+};
