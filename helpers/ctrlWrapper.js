@@ -9,6 +9,6 @@ const ctrlWrapper = (ctrl) => {
   return func;
 };
 
-module.exports = {
-  ctrlWrapper,
-};
+uth
+module.exports = { ctrlWrapper};
+
