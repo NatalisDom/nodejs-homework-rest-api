@@ -1,36 +1,33 @@
-
-const path = require("path");
 const fs = require("fs/promises");
+const path = require("path");
+const Jimp = require("jimp");
 
 const { User } = require("../../models/user");
-const { HttpError } = require("../../helpers/index");
+const { HttpError } = require("../../helpers/HttpError");
 
-const avatarsDir = path.join(__dirname, "../", "public", "avatars");
-
-
+const avatarsDir = path.resolve("public", "avatars");
 
 const updateAvatar = async (req, res) => {
-  const { _id } = req.user;
-  const { path: tempUpload, originalname } = req.file;
-  const fileFormat = originalname.slice(
-    originalname.indexOf("."),
-    originalname.lenght
-  );
-  if (fileFormat !== ".png" && fileFormat !== ".jpg") {
-    throw HttpError(400, "Invalid image format (use JPG/PNG)");
-  }
-  const fileName = _id + fileFormat;
-  const resultUpload = path.join(avatarsDir, fileName);
-  await fs.rename(tempUpload, resultUpload);
-  const avatarURL = path.join("avatars", fileName);
-  await User.findByIdAndUpdate(_id, { avatarURL });
+	const { _id: id } = req.user;
+	if (!req.file) {
+		throw HttpError(400, 'Avatar is required field');
+	}
 
-  res.json({
-    avatarURL,
-  });
-};
+	const { path: oldPath, filename } = req.file;
+
+	const image = await Jimp.read(oldPath);
+	await image.resize(250, 250).write(oldPath)
+
+	const newPath = path.join(avatarsDir, filename);
+
+	await fs.rename(oldPath, newPath)
+	const avatarURL = path.join("avatars", filename);
+
+	await User.findByIdAndUpdate(id, { avatarURL })
+
+	res.json({
+		avatarURL
+	})
+}
 
 module.exports = updateAvatar;
-
-
-
