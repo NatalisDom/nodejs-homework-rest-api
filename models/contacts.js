@@ -1,3 +1,4 @@
+
 const { Schema, model } = require("mongoose");
 const { handleMongooseError } = require("../helpers");
 
@@ -27,4 +28,5 @@ const Contact = model("contact", contactSchema);
 
 module.exports = {
   Contact,
+
 };

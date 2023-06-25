@@ -9,4 +9,6 @@ const ctrlWrapper = (ctrl) => {
   return func;
 };
 
+uth
 module.exports = { ctrlWrapper};
+
