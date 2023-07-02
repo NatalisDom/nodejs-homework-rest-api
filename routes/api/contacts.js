@@ -1,25 +1,41 @@
-const express = require('express')
+const express = require("express");
 
-const router = express.Router()
+const router = express.Router();
+const ctrl = require("../../controllers/contacts");
+const {
+  volidateBody,
+  isValidId,
+  isFavoriteField,
+  authenticate,
+} = require("../../middlewares/index");
+const {
+  addContactSchema,
+  updateFavoriteSchema,
+} = require("../../schemas/index");
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/", authenticate, ctrl.getAll);
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/:contactId", authenticate, isValidId, ctrl.getById);
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.post("/", authenticate, volidateBody(addContactSchema), ctrl.add);
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.delete("/:contactId", authenticate, isValidId, ctrl.deleteById);
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.put(
+  "/:contactId",
+  authenticate,
+  isValidId,
+  volidateBody(addContactSchema),
+  ctrl.updateById
+);
 
-module.exports = router
+router.patch(
+  "/:contactId/favorite",
+  authenticate,
+  isValidId,
+  isFavoriteField,
+  volidateBody(updateFavoriteSchema),
+  ctrl.updateStatusContact
+);
+
+module.exports = router;
